@@ -6,11 +6,24 @@ from django.utils import timezone
 
 
 class Post(models.Model):
+
+    class Status(models.TextChoices):
+        DRAFT = 'DF', 'Draft'
+        PUBLISHED = 'PB', 'Published'
+
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=250)
+    # slug = models.SlugField(max_length=250)
     text = models.TextField()
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
+
+    class Meta:
+        ordering = ['-publish']
+        indexes = [
+            models.Index(fields=['-publish']),
+        ]
 
     def publish(self):
         self.published_date = timezone.now()
@@ -35,6 +48,12 @@ class Post(models.Model): — эта строка определяет нашу 
 на пользователя?).
 •	models.CharField — так мы определяем текстовое поле с ограничением на количество символов.
 •	models.TextField — так определяется поле для неограниченно длинного текста. 
+•	slug: поле SlugField, которое транслируется в столбец VARCHAR в базе данных SQL. 
+Слаг – это короткая метка, содержащая только буквы, цифры,знаки подчеркивания или дефисы. 
+Пост с заголовком «Django Reinhardt: A legend of Jazz» мог бы содержать такой заголовок:
+ «django-reinhardtlegend-jazz». 
+ В главе 2 «Усовершенствование блога за счет продвинутых функциональностей» мы будем использовать поле slug 
+ для формирования красивых и дружественных для поисковой оптимизации URL-адресов постов блога;
 •	models.DateTimeField — дата и время.
 •	models.ForeignKey — ссылка на другую модель.
 

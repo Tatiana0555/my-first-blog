@@ -7,23 +7,23 @@ from django.utils import timezone
 
 class Post(models.Model):
 
-    class Status(models.TextChoices):
-        DRAFT = 'DF', 'Draft'
-        PUBLISHED = 'PB', 'Published'
+    # class Status(models.TextChoices):
+    #     DRAFT = 'DF', 'Draft'
+    #     PUBLISHED = 'PB', 'Published'
 
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    title = models.CharField(max_length=250)
+    title = models.CharField(max_length=200)
     # slug = models.SlugField(max_length=250)
     text = models.TextField()
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
+    # status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
 
-    class Meta:
-        ordering = ['-publish']
-        indexes = [
-            models.Index(fields=['-publish']),
-        ]
+    # class Meta:
+    #     ordering = ['-publish']
+    #     indexes = [
+    #         models.Index(fields=['-publish']),
+    #     ]
 
     def publish(self):
         self.published_date = timezone.now()
